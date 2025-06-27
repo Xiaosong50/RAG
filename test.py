@@ -1,6 +1,6 @@
 import requests
 
-API_URL = "http://localhost:8082/search"
+API_URL = "http://localhost:8083/search"
 
 print("玉米病虫草害智能检索系统（输入 exit 退出）\n")
 
@@ -11,7 +11,7 @@ while True:
         break
 
     try:
-        response = requests.get(API_URL, params={"query": query, "top_k": 2})
+        response = requests.get(API_URL, params={"query": query, "top_k": 3})
         response.raise_for_status()
         results = response.json()
 

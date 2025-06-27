@@ -4,32 +4,32 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import (CollectionStatus, Distance, PointStruct,
                                   VectorParams)
 from transformers import CLIPModel, CLIPProcessor
-# from transformers import AutoModel, AutoTokenizer
-import torch.nn.functional as F
+from transformers import AutoModel, AutoTokenizer
+# import torch.nn.functional as F
 from sentence_transformers import SentenceTransformer
 
 
 # ========== QWEN3 Text Embedding ==========
-class Qwen3Embedder:
-    def __init__(self, model_name="Qwen/Qwen3-Embedding-0.6B"):
-
-        self.model = SentenceTransformer(model_name)
-
-    def embed(self, text: str):
-        return self.model.encode(text, normalize_embeddings=True).tolist()
-
 # class Qwen3Embedder:
-#     def __init__(self, model_id="Qwen/Qwen3-Embedding-0.6B"):
-#         self.tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
-#         self.model = AutoModel.from_pretrained(model_id, trust_remote_code=True).eval()
+#     def __init__(self, model_name="Qwen/Qwen3-Embedding-0.6B"):
+
+#         self.model = SentenceTransformer(model_name)
 
 #     def embed(self, text: str):
-#         inputs = self.tokenizer(
-#             text, return_tensors="pt", truncation=True, max_length=512
-#         )
-#         with torch.no_grad():
-#             output = self.model(**inputs)
-#             return output.last_hidden_state.mean(dim=1).squeeze().tolist()
+#         return self.model.encode(text, normalize_embeddings=True).tolist()
+
+class Qwen3Embedder:
+    def __init__(self, model_id="Qwen/Qwen3-Embedding-0.6B"):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+        self.model = AutoModel.from_pretrained(model_id, trust_remote_code=True).eval()
+
+    def embed(self, text: str):
+        inputs = self.tokenizer(
+            text, return_tensors="pt", truncation=True, max_length=512
+        )
+        with torch.no_grad():
+            output = self.model(**inputs)
+            return output.last_hidden_state.mean(dim=1).squeeze().tolist()
 
 
 # ========== CLIP Image Embedding ==========
@@ -54,7 +54,7 @@ client = QdrantClient(
     prefer_grpc=True
 )
 
-COLLECTION_NAME = "multimodal"
+COLLECTION_NAME = "multimodal_test"
 # if client.collection_exists(COLLECTION_NAME):
 #     client.delete_collection(COLLECTION_NAME)
 #     print("collection deleted")
